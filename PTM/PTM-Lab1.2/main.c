@@ -42,21 +42,17 @@ int main(void)
 
 	while (1)
 	{
-		// ADCSRA |= (0 << ADSC);
 		uint16_t tank_val = watertank_value();
-		// // ADCSRA |= (0 << ADSC);
 		uint16_t pot_val = waterpot_value();
-		// uint16_t pot_val = 0;
 		busy = watertank_switch();
 		if (busy != 1)
 		{
-		sprintf(text, "DH  T  WP  WT");
-		LCD_String(text);
-		// tank_val = percent(tank_val);
-		sprintf(text, "%d, %d, %d, %d ",dht_value[2],dht_value[3],pot_val, tank_val);
-		// sprintf(text, "%d",watertank_value());
-		LCD_Command(0xC0); /* Go to 2nd line*/
-		LCD_String(text);
+			sprintf(text, "DH  T  WP  WT");
+			LCD_String(text);
+			// tank_val = percent(tank_val);
+			sprintf(text, "%d, %d, %d, %d ", dht_value[2], dht_value[3], pot_val, tank_val);
+			LCD_Command(0xC0); /* Go to 2nd line*/
+			LCD_String(text);
 		}
 		else
 		{
@@ -66,11 +62,8 @@ int main(void)
 			LCD_Command(0xC0);
 			LCD_String(text);
 		}
-		// watertank_switch();
-		// _delay_ms(1000);
-		// LCD_Clear();
-		// waterpot_switch();
-		// // temperature_switch(dht_value,light_is_on, roof_is_up);
+		waterpot_switch();
+		// temperature_switch(dht_value,light_is_on, roof_is_up);
 		_delay_ms(1000);
 		LCD_Clear();
 	}
