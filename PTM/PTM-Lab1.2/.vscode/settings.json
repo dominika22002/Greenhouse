@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "iom32.h": "c",
+        "io.h": "c",
+        "hd44780.h": "c",
+        "string": "c",
+        "lcd.h": "c",
+        "liquidcrystal_i2c.h": "c",
+        "*.tcc": "c",
+        "deque": "c",
+        "unordered_map": "c",
+        "vector": "c",
+        "system_error": "c"
+    }
+}

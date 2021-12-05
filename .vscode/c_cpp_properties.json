@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "/usr/local/Cellar/avr-gcc@9/9.3.0_2/avr/include/avr",
+                "/usr/local/Cellar/avr-gcc@9/9.3.0_2/avr/include",
+                "/usr/local/Cellar/gcc/10.2.0_4/include/c++/10.2.0",
+                "/usr/local/Cellar/gcc/10.2.0_4/include/c++/10.2.0/x86_64-apple-darwin20"
+            ],
+            "defines": [],
+            "macFrameworkPath": [],
+            "compilerPath": "/usr/local/bin/gcc-10",
+            "cStandard": "gnu17",
+            "intelliSenseMode": "${default}"
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,61 @@
+// {
+//     "configurations": [
+//         {
+//             "name": "Mac",
+//             "includePath": [
+//                 "${workspaceFolder}/**",
+//                 "/usr/local/avr/include"
+//             ],
+//             "defines": [],
+//             "macFrameworkPath": [],
+//             "compilerPath": "/usr/local/bin/gcc-10",
+//             "cStandard": "gnu17",
+//             "cppStandard": "gnu++14",
+//             "intelliSenseMode": "macos-gcc-x64"
+//         }
+//     ],
+//     "version": 4
+// }
+
+
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/local/Cellar/avr-gcc@9/9.3.0_2/avr/include/avr"
+            ],
+            "cStandard": "c11",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "/usr/local/Cellar/avr-gcc@9/9.3.0_2/avr/include/avr",
+                    "/usr/local/Cellar/avr-gcc@9/9.3.0_2/avr/include"
+                ]
+            },
+            "compilerPath": "/usr/local/bin/gcc-10",
+            "compilerArgs": [
+                "-mmcu=atmega32",
+                "-DF_CPU=8000000UL"
+            ]
+        },
+        {
+            "name": "1",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            // "compilerPath": "/usr/local/bin/gcc-10",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "macos-gcc-x64"
+        }
+    ],
+    "version": 4
+}
