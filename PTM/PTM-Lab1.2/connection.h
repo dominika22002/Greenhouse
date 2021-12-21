@@ -4,6 +4,7 @@
 #include "waterpot.h"
 #include "watertank.h"
 #include "temperature.h"
+#include "motor.h"
 #include "lcd.h"
 
 #define TIME 10000
@@ -60,9 +61,9 @@ int watertank_switch()
     return 0;
 }
 
-int * temperature_switch(int dht_value[4],bool light_is_on, bool roof_is_up)
-{   
-    
+int *temperature_switch(int dht_value[4], bool light_is_on, bool roof_is_up)
+{
+
     temperature_level(dht_value);
 
     switch (dht_value[0])
@@ -73,7 +74,7 @@ int * temperature_switch(int dht_value[4],bool light_is_on, bool roof_is_up)
             //opusc klape
         }
         roof_is_up = false;
-        
+
     case 2: // wolgotnosc jest za duza, podnies klapy
         if (!roof_is_up)
         {
@@ -118,9 +119,8 @@ uint16_t percent(uint16_t tank)
     // int pot_v = pot;
     int pot_t = tank;
     // pot = pot_v*100/MAX_WP;
-    tank = pot_t*100/MAX_WT;
+    tank = pot_t * 100 / MAX_WT;
     return tank;
-
 }
 
 #endif
