@@ -1,86 +1,83 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <math.h>
-#include <avr/io.h>
-#include <util/delay.h>
-#include <avr/sfr_defs.h>
-#include <avr/interrupt.h>
-#include <avr/eeprom.h>
-#include <avr/iom32.h>
-
-//#include "lcd.h"
-// #include "waterpot.h"
-// #include "watertank.h"
+#include "lcd.h"
 #include "connection.h"
-// #include "temperature.h"
 
-static inline void initADC(void)
-{                        // czujnik wody
-  ADMUX |= (1 << REFS0); //ustawienie napięcia ref na napięcie zasilania
-  //ADMUX |= ((1<<MUX0)| (1<<MUX2)); //wybor kanalu, w tym wypadku kanal 7 (00111)
-  ADCSRA |= (1 << ADPS1) | (1 << ADPS0); //czestotliwosc na 8
-  ADCSRA |= (1 << ADEN);                 //uruchomienie przetwornika ADC
+static inline void InitADC(void)
+{
+    ADMUX |= (1 << REFS0);                 //ustawienie napięcia ref na napięcie zasilania
+    ADCSRA |= (1 << ADPS1) | (1 << ADPS0); //czestotliwosc na 8
+    ADCSRA |= (1 << ADEN);                 //uruchomienie przetwornika ADC
+}
+
+void Initialization()
+{
+    MOTOR_DDR |= (1 << MOTOR_PIN1);    //Motor init
+    MOTOR_DDR |= (1 << MOTOR_PIN2);    //Motor init
+    PUMP_DDR |= (1 << PUMP_PIN);       //Pump init
+    SWITCH_DDR |= (1 << SWITCH_UP);    //Switch init
+    SWITCH_DDR |= (1 << SWITCH_DOWN);  //Switch init
+    BUTTON_DDR |= (1 << BUTTON_UP);    //Button init
+    BUTTON_DDR |= (1 << BUTTON_DOWN);  //Button init
+    LED_DDR |= (1 << LED_UP);          //Button init
+    LED_DDR |= (1 << LED_DOWN);        //Button init
+    SWITCH_PORT |= (1 << SWITCH_UP);   //Switch pull up
+    SWITCH_PORT |= (1 << SWITCH_DOWN); //Switch pull up
+    BUTTON_PORT |= (1 << BUTTON_UP);   //Button pull up
+    BUTTON_PORT |= (1 << BUTTON_DOWN); //Button pull up
+
+    PUMP_PORT &= ~(1 << PUMP_PIN); //turn off the pump
+
+    InitADC();
+    LCD_Init();
 }
 
 int main(void)
 {
-  // inicjalizacja naszych rzeczy
-  DDRA |= (1 << PA6);
-  DDRA |= (1 << PA7);
-  initADC();
-  LCD_Init();
+    Initialization();
+    //Variables
+    char text[20];                  //LCD text buffor
 
-  //zmienne przechowujace wartosci
-  uint16_t liquidsensor_value = 0;
-  int busy = 0;
-  char text[20];
-  int time_sum = 0;
+    bool LCD_is_busy = false;       //tell us if water tank level is okay
+    int roof = WhichSwitch();       //tell us if roof is up
+    bool pump_is_on = false;
 
-  char printbuff[100];
+    _delay_ms(200); //wait to initialization
 
-  bool light_is_on = false;
-  bool roof_is_up = false;
-  int dht_value[4];
-  reset(dht_value);
-
-  motor_stop();
-  while (1)
-  {
-  }
-  return 0;
-
-  while (1)
-  {
-    uint16_t pot_val = waterpot_value();
-    uint16_t tank_val = watertank_value();
-    // busy = watertank_switch();
-    busy = 0;
-    // waterpot_switch();
-    if (busy != 1)
+    while (1)
     {
-      sprintf(text, "DH  T  WP  WT");
-      LCD_String(text);
-      // tank_val = percent(tank_val);
-      sprintf(text, "%d, %d, %d, %d ", dht_value[2], dht_value[3], pot_val, tank_val);
-      LCD_Command(0xC0); /* Go to 2nd line*/
-      LCD_String(text);
-    }
-    else
-    {
-      sprintf(text, "Dolej wody!");
-      LCD_String(text);
-      // sprintf(text, "%d / %d", tank_val, MIN_VAL);
-      LCD_Command(0xC0);
-      LCD_String(text);
-    }
-    // waterpot_switch();
-    // temperature_switch(dht_value, light_is_on, roof_is_up);
-    // tank_val = percent(tank_val);
-    _delay_ms(1000);
-    LCD_Clear();
-  }
+        roof = WhichSwitch();
+        led(roof);
+        roof_up_down();
+        uint16_t tank_val = watertank_value();
+        uint16_t pot_val = percent(waterpot_value());
+        uint16_t temp_val = redo(temp_value());
 
-  return (0);
+        uint16_t i = temp_val / 100;
+        uint16_t j = temp_val - i * 100;
+
+        LCD_is_busy = watertank_switch(tank_val);
+        if (!LCD_is_busy)
+        {
+            sprintf(text, "Tem    Pot  Tank");
+            LCD_String(text);
+            if (j < 10)
+                sprintf(text, "%d,0%d  %3d  %3d ", i, j, pot_val, tank_val);
+            else
+                sprintf(text, "%d,%2d  %3d  %3d ", i, j, pot_val, tank_val);
+            LCD_Command(0xC0);
+            LCD_String(text);
+            waterpot_switch(pot_val,pump_is_on);
+        }
+        else
+        {
+            sprintf(text, "Dolej wody!");
+            LCD_String(text);
+            sprintf(text, "%d / %d", tank_val, WATERTANK_MIN);
+            LCD_Command(0xC0);
+            LCD_String(text);
+        }
+        _delay_ms(1000);
+        LCD_Clear();
+    }
+
+    return 0;
 }
